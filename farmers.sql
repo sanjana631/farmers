@@ -98,6 +98,44 @@ CREATE TRIGGER `updation` AFTER UPDATE ON `register` FOR EACH ROW INSERT INTO tr
 $$
 DELIMITER ;
 
+-- Triggers for addagroproducts table
+DELIMITER $$
+CREATE TRIGGER `product_insertion` AFTER INSERT ON `addagroproducts` FOR EACH ROW 
+INSERT INTO trig VALUES(null, NEW.pid, 'PRODUCT ADDED', NOW())
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `product_updation` AFTER UPDATE ON `addagroproducts` FOR EACH ROW 
+INSERT INTO trig VALUES(null, NEW.pid, 'PRODUCT UPDATED', NOW())
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `product_deletion` BEFORE DELETE ON `addagroproducts` FOR EACH ROW 
+INSERT INTO trig VALUES(null, OLD.pid, 'PRODUCT DELETED', NOW())
+$$
+DELIMITER ;
+
+-- Triggers for farming table
+DELIMITER $$
+CREATE TRIGGER `farming_insertion` AFTER INSERT ON `farming` FOR EACH ROW 
+INSERT INTO trig VALUES(null, NEW.fid, 'FARMING TYPE ADDED', NOW())
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `farming_updation` AFTER UPDATE ON `farming` FOR EACH ROW 
+INSERT INTO trig VALUES(null, NEW.fid, 'FARMING TYPE UPDATED', NOW())
+$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `farming_deletion` BEFORE DELETE ON `farming` FOR EACH ROW 
+INSERT INTO trig VALUES(null, OLD.fid, 'FARMING TYPE DELETED', NOW())
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --

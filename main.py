@@ -68,7 +68,11 @@ class Register(db.Model):
     address=db.Column(db.String(50))
     farming=db.Column(db.String(50))
 
-    
+# Add this function to record actions manually when needed
+def record_action(action_id, action_desc):
+    new_record = Trig(fid=str(action_id), action=action_desc, timestamp=datetime.now())
+    db.session.add(new_record)
+    db.session.commit()
 
 @app.route('/')
 def index(): 
@@ -99,6 +103,10 @@ def addagroproduct():
         products=Addagroproducts(username=username,email=email,productname=productname,productdesc=productdesc,price=price)
         db.session.add(products)
         db.session.commit()
+        
+        # The trigger will handle this, but in case we want more details:
+        record_action(products.pid, f'PRODUCT ADDED: {productname} by {username}')
+        
         flash("Product Added","info")
         return redirect('/agroproducts')
    
@@ -123,11 +131,12 @@ def addfarming():
         dep=Farming(farmingtype=farmingtype)
         db.session.add(dep)
         db.session.commit()
-        flash("Farming Addes","success")
+        
+        # Record action
+        record_action(dep.fid, f'FARMING TYPE ADDED: {farmingtype}')
+        
+        flash("Farming Added","success")
     return render_template('farming.html')
-
-
-
 
 @app.route("/delete/<string:rid>",methods=['POST','GET'])
 @login_required
@@ -208,6 +217,10 @@ def login():
 
         if user and user.password == password:
             login_user(user)
+            
+            # Record login action
+            record_action(user.id, f'USER LOGIN: {user.username}')
+            
             flash("Login Success","primary")
             return redirect(url_for('index'))
         else:
@@ -219,6 +232,9 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    # Record logout action
+    record_action(current_user.id, f'USER LOGOUT: {current_user.username}')
+    
     logout_user()
     flash("Logout SuccessFul","warning")
     return redirect(url_for('login'))
